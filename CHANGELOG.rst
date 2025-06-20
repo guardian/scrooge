@@ -7,6 +7,10 @@ Note that ``PHAB_ID=#`` and ``RB_ID=#`` correspond to associated messages in com
 Unreleased
 ----------
 
+* scrooge-generator: the `c.t.scrooge.frontend.ThriftParser` no longer always
+  throws exceptions rather than warnings when a fieldname matches a reserved
+  keyword, restoring the previous behaviour.
+
 24.2.0
 ------
 
@@ -139,10 +143,13 @@ New Features
 
 Breaking API Changes
 ~~~~~~~~~~~~~~~~~~~~
+
 * scrooge-generator: the `c.t.scrooge.frontend.ThriftParser` now always throws exceptions 
   rather than warnings when a fieldname matches a reserved keyword. See 
   `c.t.scrooge.frontend.ThriftKeywords` for the full list of disallowed 
   keywords. ``PHAB_ID=D814995``
+
+  * this change has been reverted
 
 22.1.0
 ------
