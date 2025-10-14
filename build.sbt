@@ -15,8 +15,8 @@ lazy val versions = new {
   val libthrift = "0.10.0"
 }
 
-def util(which: String) = "com.twitter" %% ("util-" + which) % releaseVersion
-def finagle(which: String) = "com.twitter" %% ("finagle-" + which) % releaseVersion
+def util(which: String) = "com.twitter" %% ("util-" + which) % "24.2.0"
+def finagle(which: String) = "com.twitter" %% ("finagle-" + which) % "24.2.0"
 
 val compileThrift = TaskKey[Seq[File]]("compile-thrift", "generate thrift needed for tests")
 
