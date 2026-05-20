@@ -8,7 +8,7 @@ Global / excludeLintKeys += scalacOptions
 // 'git checkout develop; sbt publishLocal' to publish SNAPSHOT versions of these projects.
 
 // All Twitter library releases are date versioned as YY.MM.patch
-val releaseVersion = "24.2.0"
+val releaseVersion = "1.0.0-SNAPSHOT"
 
 lazy val versions = new {
   val slf4j = "1.7.30"
@@ -105,7 +105,7 @@ val scalacTwoTenOptions =
 
 val sharedSettingsWithoutScalaVersion = Seq(
   version := releaseVersion,
-  organization := "com.twitter",
+  organization := "com.gu",
   resolvers ++= Seq(
     "sonatype-public" at "https://oss.sonatype.org/content/groups/public"
   ),
