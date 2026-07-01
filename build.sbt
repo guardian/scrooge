@@ -123,37 +123,11 @@ val sharedSettingsWithoutScalaVersion = Seq(
   // -a: print stack traces for failing asserts
   testOptions += Tests.Argument(TestFrameworks.JUnit, "-a"),
   // Sonatype publishing
-  Test / publishArtifact := false,
+  Test / publish / skip := true,
   pomIncludeRepository := { _ => false },
   publishMavenStyle := true,
   publishConfiguration := publishConfiguration.value.withOverwrite(true),
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
-  pomExtra :=
-    <url>https://github.com/twitter/scrooge</url>
-      <licenses>
-        <license>
-          <name>Apache License, Version 2.0</name>
-          <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-      </licenses>
-      <scm>
-        <url>git@github.com:twitter/scrooge.git</url>
-        <connection>scm:git:git@github.com:twitter/scrooge.git</connection>
-      </scm>
-      <developers>
-        <developer>
-          <id>twitter</id>
-          <name>Twitter Inc.</name>
-          <url>https://www.twitter.com/</url>
-        </developer>
-      </developers>,
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (version.value.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
   Compile / resourceGenerators += Def.task {
     val dir = (Compile / resourceManaged).value
     val file = dir / "com" / "twitter" / name.value / "build.properties"
@@ -313,7 +287,7 @@ lazy val scroogeGeneratorTests = Project(
       util("mock") % "test"
     ),
     assembly / test := {}, // Skip tests when running assembly.
-    publishArtifact := false
+    publish / skip := true
   ).dependsOn(scroogeCore, scroogeGenerator)
 
 lazy val scroogeCore = Project(
