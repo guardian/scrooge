@@ -7,9 +7,6 @@ Global / excludeLintKeys += scalacOptions
 // you would like to instead do it manually, you need to publish util, and finagle locally:
 // 'git checkout develop; sbt publishLocal' to publish SNAPSHOT versions of these projects.
 
-// All Twitter library releases are date versioned as YY.MM.patch
-val releaseVersion = "1.0.0-SNAPSHOT"
-
 lazy val versions = new {
   val slf4j = "1.7.30"
   val libthrift = "0.10.0"
@@ -104,7 +101,6 @@ val scalacTwoTenOptions =
   Seq("-deprecation", "-unchecked", "-feature", "-Xlint", "-encoding", "utf8")
 
 val sharedSettingsWithoutScalaVersion = Seq(
-  version := releaseVersion,
   organization := "com.gu",
   resolvers ++= Seq(
     "sonatype-public" at "https://oss.sonatype.org/content/groups/public"
