@@ -9,3 +9,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
 addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.4.1")
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.4.3")
 addSbtPlugin("com.github.sbt" % "sbt-unidoc" % "0.5.0")
+
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.5.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-version-policy" % "3.2.1")
