@@ -17,3 +17,8 @@ target/
 
 # Scrooge specific
 .classpath.txt
+/.metals/
+/.bsp/
+/project/.bloop/
+/project/metals.sbt
+/project/project/
