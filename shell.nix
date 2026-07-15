@@ -20,7 +20,7 @@ let
       sbt +scrooge-generator/publishLocal
       sbt +scrooge-publish-local/publishLocal
       sbt ++2.10.7 ^^0.13.18 scrooge-sbt-plugin/publishLocal
-      sbt "project scrooge-sbt-plugin" ++2.12.12 ^^1.7.1 publishLocal
+      sbt "project scrooge-sbt-plugin" ++2.12.12 ^^1.12.13 publishLocal
     '';
   };
 
