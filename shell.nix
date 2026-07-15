@@ -8,7 +8,7 @@ let
   guardianDev = import "${guardianNix.outPath}/guardian-dev.nix" pkgs;
   # guardianDev = import ../guardian-nix/guardian-dev.nix pkgs;
 
-  sbt = pkgs.sbt.override { jre = pkgs.corretto11; };
+  sbt = pkgs.sbt.override { jre = pkgs.corretto21; };
   metals = pkgs.metals; # .override { jre = pkgs.zulu11; };
 
   # Publishes a local version of scrooge, including sbt plugin.
