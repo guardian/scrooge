@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-sbtver="1.7.1"
+sbtver="1.12.13"
 sbtjar="sbt-launch-$sbtver.jar"
 sbtsha128="468efdd45baf58dbb575f9b4369c5234f8cd54ba"
 
