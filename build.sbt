@@ -154,7 +154,7 @@ val settingsWithTwoTen =
       )
     )
 
-val commonScalaVersions = Seq("2.12.12", "2.13.18")
+val commonScalaVersions = Seq("2.12.21", "2.13.18")
 
 // settings for projects that are cross compiled with scala 2.10
 val settingsCrossCompiledWithTwoTen =
