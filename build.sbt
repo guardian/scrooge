@@ -154,14 +154,14 @@ val settingsWithTwoTen =
       )
     )
 
-val commonScalaVersions = Seq("2.12.12", "2.13.10")
+val commonScalaVersions = Seq("2.12.12", "2.13.18")
 
 // settings for projects that are cross compiled with scala 2.10
 val settingsCrossCompiledWithTwoTen =
   sharedSettingsWithoutScalaVersion ++
     Seq(
       crossScalaVersions := Seq("2.10.7") ++ commonScalaVersions,
-      scalaVersion := "2.13.10",
+      scalaVersion := "2.13.18",
       scalacOptions := scalacTwoTenOptions,
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
       doc / javacOptions := Seq("-source", "1.8"),
@@ -173,7 +173,7 @@ val settingsCrossCompiledWithTwoTen =
 val sharedSettings =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      scalaVersion := "2.13.10",
+      scalaVersion := "2.13.18",
       crossScalaVersions := commonScalaVersions,
       scalacOptions := Seq(
         "-deprecation",
