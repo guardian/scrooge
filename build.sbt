@@ -45,13 +45,16 @@ def gcJavaOptions: Seq[String] = {
   val javaVersion = System.getProperty("java.version")
   if (javaVersion.startsWith("1.8")) {
     jdk8GcJavaOptions
-  } else {
+  } else if (javaVersion.startsWith("11")) {
     jdk11GcJavaOptions
+  } else {
+    Seq.empty
   }
 }
 
 def jdk8GcJavaOptions: Seq[String] = {
   Seq(
+    "-XX:+AggressiveOpts",
     "-XX:+UseParNewGC",
     "-XX:+UseConcMarkSweepGC",
     "-XX:+CMSParallelRemarkEnabled",
@@ -67,6 +70,7 @@ def jdk8GcJavaOptions: Seq[String] = {
 
 def jdk11GcJavaOptions: Seq[String] = {
   Seq(
+    "-XX:+AggressiveOpts",
     "-XX:+UseConcMarkSweepGC",
     "-XX:+CMSParallelRemarkEnabled",
     "-XX:+CMSClassUnloadingEnabled",
@@ -115,7 +119,6 @@ val sharedSettingsWithoutScalaVersion = Seq(
   Test / parallelExecution := false,
   javaOptions ++= Seq(
     "-Djava.net.preferIPv4Stack=true",
-    "-XX:+AggressiveOpts",
     "-server"
   ),
   javaOptions ++= gcJavaOptions,
