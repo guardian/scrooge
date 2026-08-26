@@ -45,7 +45,7 @@ def gcJavaOptions: Seq[String] = {
   val javaVersion = System.getProperty("java.version")
   if (javaVersion.startsWith("1.8")) {
     jdk8GcJavaOptions
-  } else if (javaVersion.startsWith("11")) {
+  } else if (javaVersion.startsWith("1.11")) {
     jdk11GcJavaOptions
   } else {
     Seq.empty
