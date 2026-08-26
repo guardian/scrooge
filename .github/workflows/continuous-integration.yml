@@ -28,6 +28,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+      - uses: sbt/setup-sbt@v1.5.7
       - name: echo java version
         run: java -Xmx32m -version
       - name: echo javac version
@@ -51,6 +52,6 @@ jobs:
             find ~/.sbt         -name "*.lock"               -delete
           fi
       - name: test
-        run: ${{ format('./sbt ++{0} clean test', matrix.scala) }}
+        run: ${{ format('sbt ++{0} clean test', matrix.scala) }}
       - name: scrooge-generator test
-        run: ${{ format('./sbt ++{0} "project scrooge-generator-tests" test', matrix.scala) }}
+        run: ${{ format('sbt ++{0} "project scrooge-generator-tests" test', matrix.scala) }}
