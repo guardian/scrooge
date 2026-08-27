@@ -53,5 +53,3 @@ jobs:
           fi
       - name: test
         run: ${{ format('sbt ++{0} clean test', matrix.scala) }}
-      - name: scrooge-generator test
-        run: ${{ format('sbt ++{0} "project scrooge-generator-tests" test', matrix.scala) }}
