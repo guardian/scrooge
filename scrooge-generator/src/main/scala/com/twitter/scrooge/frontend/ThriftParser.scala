@@ -109,7 +109,7 @@ class ThriftParser(
   lazy val simpleIDRegex: Regex = "[A-Za-z_][A-Za-z0-9_]*".r
   lazy val simpleID: Parser[SimpleID] = positioned(simpleIDRegex ^^ { x =>
     if (ThriftKeywords.contains(x))
-      throw new KeywordException(x)
+      failOrWarn(new KeywordException(x))
 
     SimpleID(x)
   })

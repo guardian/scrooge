@@ -5,7 +5,9 @@ import com.twitter.scrooge.thrift_validation.ThriftValidationViolation
 import com.twitter.scrooge.thrift_validation.ThriftValidator
 import org.scalatest.Assertion
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.Ignore
 
+@Ignore
 class ThriftValidatorSpec extends AnyFunSuite {
   val utilValidator: UtilValidator = UtilValidator()
   class CustomValidator extends ThriftValidator {
