@@ -7,16 +7,13 @@ Global / excludeLintKeys += scalacOptions
 // you would like to instead do it manually, you need to publish util, and finagle locally:
 // 'git checkout develop; sbt publishLocal' to publish SNAPSHOT versions of these projects.
 
-// All Twitter library releases are date versioned as YY.MM.patch
-val releaseVersion = "24.2.0-SNAPSHOT"
-
 lazy val versions = new {
   val slf4j = "1.7.30"
   val libthrift = "0.10.0"
 }
 
-def util(which: String) = "com.twitter" %% ("util-" + which) % releaseVersion
-def finagle(which: String) = "com.twitter" %% ("finagle-" + which) % releaseVersion
+def util(which: String) = "com.twitter" %% ("util-" + which) % "24.2.0"
+def finagle(which: String) = "com.twitter" %% ("finagle-" + which) % "24.2.0"
 
 val compileThrift = TaskKey[Seq[File]]("compile-thrift", "generate thrift needed for tests")
 
@@ -48,13 +45,16 @@ def gcJavaOptions: Seq[String] = {
   val javaVersion = System.getProperty("java.version")
   if (javaVersion.startsWith("1.8")) {
     jdk8GcJavaOptions
-  } else {
+  } else if (javaVersion.startsWith("1.11")) {
     jdk11GcJavaOptions
+  } else {
+    Seq.empty
   }
 }
 
 def jdk8GcJavaOptions: Seq[String] = {
   Seq(
+    "-XX:+AggressiveOpts",
     "-XX:+UseParNewGC",
     "-XX:+UseConcMarkSweepGC",
     "-XX:+CMSParallelRemarkEnabled",
@@ -70,6 +70,7 @@ def jdk8GcJavaOptions: Seq[String] = {
 
 def jdk11GcJavaOptions: Seq[String] = {
   Seq(
+    "-XX:+AggressiveOpts",
     "-XX:+UseConcMarkSweepGC",
     "-XX:+CMSParallelRemarkEnabled",
     "-XX:+CMSClassUnloadingEnabled",
@@ -104,8 +105,7 @@ val scalacTwoTenOptions =
   Seq("-deprecation", "-unchecked", "-feature", "-Xlint", "-encoding", "utf8")
 
 val sharedSettingsWithoutScalaVersion = Seq(
-  version := releaseVersion,
-  organization := "com.twitter",
+  organization := "com.gu",
   resolvers ++= Seq(
     "sonatype-public" at "https://oss.sonatype.org/content/groups/public"
   ),
@@ -119,7 +119,6 @@ val sharedSettingsWithoutScalaVersion = Seq(
   Test / parallelExecution := false,
   javaOptions ++= Seq(
     "-Djava.net.preferIPv4Stack=true",
-    "-XX:+AggressiveOpts",
     "-server"
   ),
   javaOptions ++= gcJavaOptions,
@@ -127,37 +126,12 @@ val sharedSettingsWithoutScalaVersion = Seq(
   // -a: print stack traces for failing asserts
   testOptions += Tests.Argument(TestFrameworks.JUnit, "-a"),
   // Sonatype publishing
-  Test / publishArtifact := false,
+  Test / publish / skip := true,
   pomIncludeRepository := { _ => false },
   publishMavenStyle := true,
   publishConfiguration := publishConfiguration.value.withOverwrite(true),
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
-  pomExtra :=
-    <url>https://github.com/twitter/scrooge</url>
-      <licenses>
-        <license>
-          <name>Apache License, Version 2.0</name>
-          <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-      </licenses>
-      <scm>
-        <url>git@github.com:twitter/scrooge.git</url>
-        <connection>scm:git:git@github.com:twitter/scrooge.git</connection>
-      </scm>
-      <developers>
-        <developer>
-          <id>twitter</id>
-          <name>Twitter Inc.</name>
-          <url>https://www.twitter.com/</url>
-        </developer>
-      </developers>,
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (version.value.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+  licenses := Seq(License.Apache2),
   Compile / resourceGenerators += Def.task {
     val dir = (Compile / resourceManaged).value
     val file = dir / "com" / "twitter" / name.value / "build.properties"
@@ -183,14 +157,14 @@ val settingsWithTwoTen =
       )
     )
 
-val commonScalaVersions = Seq("2.12.12", "2.13.6")
+val commonScalaVersions = Seq("2.12.21", "2.13.18")
 
 // settings for projects that are cross compiled with scala 2.10
 val settingsCrossCompiledWithTwoTen =
   sharedSettingsWithoutScalaVersion ++
     Seq(
       crossScalaVersions := Seq("2.10.7") ++ commonScalaVersions,
-      scalaVersion := "2.13.6",
+      scalaVersion := "2.13.18",
       scalacOptions := scalacTwoTenOptions,
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
       doc / javacOptions := Seq("-source", "1.8"),
@@ -202,7 +176,7 @@ val settingsCrossCompiledWithTwoTen =
 val sharedSettings =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      scalaVersion := "2.13.6",
+      scalaVersion := "2.13.18",
       crossScalaVersions := commonScalaVersions,
       scalacOptions := Seq(
         "-deprecation",
@@ -317,7 +291,7 @@ lazy val scroogeGeneratorTests = Project(
       util("mock") % "test"
     ),
     assembly / test := {}, // Skip tests when running assembly.
-    publishArtifact := false
+    publish / skip := true
   ).dependsOn(scroogeCore, scroogeGenerator)
 
 lazy val scroogeCore = Project(
