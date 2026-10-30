@@ -217,8 +217,11 @@ lazy val scrooge = Project(
   id = "scrooge",
   base = file(".")
 ).enablePlugins(
-    ScalaUnidocPlugin
-  ).aggregate(publishedProjects: _*)
+  ScalaUnidocPlugin
+).aggregate(publishedProjects: _*).settings(
+  releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value,
+  releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion)
+)
 
 // This target is used for publishing dependencies locally
 // and is used for generating all(*) of the dependencies
@@ -232,7 +235,9 @@ lazy val scroogePublishLocal = Project(
   // use a different target so that we don't have conflicting output paths
   // between this and the `scrooge` target.
   base = file("target/")
-).aggregate(publishedProjects: _*)
+).aggregate(publishedProjects: _*).settings(
+  publish / skip := true
+)
 
 // must be cross compiled with scala 2.10 because scrooge-sbt-plugin
 // has a dependency on this.
@@ -240,7 +245,7 @@ lazy val thriftValidation = Project(
   id = "scrooge-thriftValidation",
   base = file("scrooge-thrift-validation")
 ).settings(
-    settingsCrossCompiledWithTwoTen
+    settingsCrossCompiledWithTwoTen,
   ).settings(
     libraryDependencies ++= Seq(
       util("validator-constraints"),
@@ -258,6 +263,7 @@ lazy val scroogeGenerator = Project(
     settingsCrossCompiledWithTwoTen
   ).settings(
     name := "scrooge-generator",
+    publish / skip := true,
     libraryDependencies ++= Seq(
       "org.apache.thrift" % "libthrift" % versions.libthrift,
       "com.github.scopt" %% "scopt" % "4.0.0-RC2",
@@ -280,7 +286,7 @@ lazy val scroogeGeneratorTests = Project(
 ).settings(
     inConfig(Test)(testThriftSettings),
     sharedSettings,
-    jmockSettings
+  jmockSettings
   ).settings(
     name := "scrooge-generator-tests",
     libraryDependencies ++= Seq(
@@ -307,8 +313,6 @@ lazy val scroogeCore = Project(
       util("validator"),
       util("mock") % "test"
     ),
-    releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value,
-    releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion)
   ).dependsOn(thriftValidation)
 
 val serializerTestThriftSettings: Seq[Setting[_]] = Seq(
@@ -360,6 +364,7 @@ lazy val scroogeSbtPlugin = Project(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.twitter",
     sbtPlugin := true,
+    publish / skip := true
   ).dependsOn(scroogeGenerator)
 
 lazy val scroogeLinter = Project(
@@ -386,7 +391,8 @@ lazy val scroogeBenchmark = Project(
 ).settings(
     inConfig(Compile)(benchThriftSettings),
     sharedSettings,
-    dumpClasspathSettings
+    dumpClasspathSettings,
+    publish / skip := true
   ).enablePlugins(
     JmhPlugin
   ).settings(
@@ -407,6 +413,7 @@ lazy val scroogeDoc = Project(
     SphinxPlugin
   ).settings(
     sharedSettings,
+    publish / skip := true,
     Seq(
       doc / scalacOptions ++= Seq("-doc-title", "Scrooge", "-doc-version", version.value),
       Sphinx / includeFilter := ("*.html" | "*.png" | "*.js" | "*.css" | "*.gif" | "*.txt")
