@@ -130,8 +130,6 @@ val sharedSettingsWithoutScalaVersion = Seq(
   // Sonatype publishing
   Test / publish / skip := true,
   pomIncludeRepository := { _ => false },
-  publishConfiguration := publishConfiguration.value.withOverwrite(true),
-  publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
   licenses := Seq(License.Apache2),
   Compile / resourceGenerators += Def.task {
     val dir = (Compile / resourceManaged).value
