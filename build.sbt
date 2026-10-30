@@ -130,7 +130,6 @@ val sharedSettingsWithoutScalaVersion = Seq(
   // Sonatype publishing
   Test / publish / skip := true,
   pomIncludeRepository := { _ => false },
-  publishMavenStyle := true,
   publishConfiguration := publishConfiguration.value.withOverwrite(true),
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
   licenses := Seq(License.Apache2),
