@@ -1,4 +1,5 @@
 import scala.language.reflectiveCalls
+import ReleaseTransformations.*
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 Global / excludeLintKeys += scalacOptions
@@ -307,7 +308,8 @@ lazy val scroogeCore = Project(
       util("core"),
       util("validator"),
       util("mock") % "test"
-    )
+    ),
+    releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion)
   ).dependsOn(thriftValidation)
 
 val serializerTestThriftSettings: Seq[Setting[_]] = Seq(
