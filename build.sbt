@@ -1,5 +1,6 @@
 import scala.language.reflectiveCalls
 import ReleaseTransformations.*
+import sbtversionpolicy.withsbtrelease.ReleaseVersion
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 Global / excludeLintKeys += scalacOptions
@@ -309,6 +310,7 @@ lazy val scroogeCore = Project(
       util("validator"),
       util("mock") % "test"
     ),
+    releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value,
     releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion)
   ).dependsOn(thriftValidation)
 
