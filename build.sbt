@@ -210,6 +210,7 @@ lazy val publishedProjects =
     scroogeAdaptive,
     scroogeCore,
     scroogeLinter,
+    scroogeSbtPlugin,
     scroogeSerializer,
     thriftValidation)
 
@@ -364,8 +365,7 @@ lazy val scroogeSbtPlugin = Project(
     crossSbtVersions := Seq("0.13.18", "1.5.3"),
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.twitter",
-    sbtPlugin := true,
-    publish / skip := true
+    sbtPlugin := true
   ).dependsOn(scroogeGenerator)
 
 lazy val scroogeLinter = Project(
