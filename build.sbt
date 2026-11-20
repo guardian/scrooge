@@ -210,6 +210,7 @@ lazy val publishedProjects =
     scroogeAdaptive,
     scroogeCore,
     scroogeLinter,
+    scroogeSbtPlugin,
     scroogeSerializer,
     thriftValidation)
 
@@ -221,7 +222,8 @@ lazy val scrooge = Project(
 ).aggregate(publishedProjects: _*).settings(
   publish / skip := true,
   releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value,
-  releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion)
+  releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion),
+  releaseCrossBuild := true
 )
 
 // This target is used for publishing dependencies locally
