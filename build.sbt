@@ -219,6 +219,7 @@ lazy val scrooge = Project(
 ).enablePlugins(
   ScalaUnidocPlugin
 ).aggregate(publishedProjects: _*).settings(
+  publish / skip := true,
   releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion)
 )
