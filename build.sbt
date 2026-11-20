@@ -210,7 +210,6 @@ lazy val publishedProjects =
     scroogeAdaptive,
     scroogeCore,
     scroogeLinter,
-    scroogeSbtPlugin,
     scroogeSerializer,
     thriftValidation)
 
