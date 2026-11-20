@@ -144,10 +144,10 @@ val sharedSettingsWithoutScalaVersion = Seq(
 )
 
 // settings for projects that are scala 2.10
-val settingsWithTwoTen =
+val settingsWithTwoTwelve =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      scalaVersion := "2.10.7",
+      scalaVersion := "2.12.21",
       scalacOptions := scalacTwoTenOptions,
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
       doc / javacOptions := Seq("-source", "1.8"),
@@ -162,7 +162,7 @@ val commonScalaVersions = Seq("2.12.21", "2.13.18")
 val settingsCrossCompiledWithTwoTen =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      crossScalaVersions := Seq("2.10.7") ++ commonScalaVersions,
+      crossScalaVersions := commonScalaVersions,
       scalaVersion := "2.13.18",
       scalacOptions := scalacTwoTenOptions,
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
@@ -358,10 +358,10 @@ lazy val scroogeSbtPlugin = Project(
   id = "scrooge-sbt-plugin",
   base = file("scrooge-sbt-plugin")
 ).enablePlugins(BuildInfoPlugin).settings(
-    settingsWithTwoTen: _*
+    settingsWithTwoTwelve: _*
   ).settings(
-    scalaVersion := "2.10.7",
-    crossSbtVersions := Seq("0.13.18", "1.5.3"),
+    scalaVersion := "2.12.21",
+    crossSbtVersions := Seq("1.5.3"),
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.twitter",
     sbtPlugin := true
