@@ -209,6 +209,7 @@ lazy val publishedProjects =
   Seq[sbt.ProjectReference](
     scroogeAdaptive,
     scroogeCore,
+    scroogeGenerator,
     scroogeLinter,
     scroogeSbtPlugin,
     scroogeSerializer,
@@ -266,7 +267,6 @@ lazy val scroogeGenerator = Project(
     settingsCrossCompiledWithTwoTen
   ).settings(
     name := "scrooge-generator",
-    publish / skip := true,
     libraryDependencies ++= Seq(
       "org.apache.thrift" % "libthrift" % versions.libthrift,
       "com.github.scopt" %% "scopt" % "4.0.0-RC2",
