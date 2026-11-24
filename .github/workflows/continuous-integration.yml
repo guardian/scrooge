@@ -20,7 +20,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scala: [2.12.21, 2.13.18]
         java: ['1.8', '1.11', '21']
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +41,7 @@ jobs:
             ~/.ivy2/cache
             ~/.ivy2/local/com.twitter
             ~/.sbt
-          key: ${{ runner.os }}-build-${{ env.BUILD_VERSION }}-${{ env.cache-name }}-${{ env.SBT_VERSION }}-${{ matrix.scala }}-${{ matrix.java }}
+          key: ${{ runner.os }}-build-${{ env.BUILD_VERSION }}-${{ env.cache-name }}-${{ env.SBT_VERSION }}-${{ matrix.java }}
       - name: update cache
         run: |
           if [ -f ~/.ivy2/cache ]; then
@@ -52,4 +51,4 @@ jobs:
             find ~/.sbt         -name "*.lock"               -delete
           fi
       - name: test
-        run: ${{ format('sbt ++{0} clean test', matrix.scala) }}
+        run: ${{ format('sbt clean +test') }}

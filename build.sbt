@@ -1,4 +1,6 @@
 import scala.language.reflectiveCalls
+import ReleaseTransformations.*
+import sbtversionpolicy.withsbtrelease.ReleaseVersion
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 Global / excludeLintKeys += scalacOptions
@@ -128,9 +130,6 @@ val sharedSettingsWithoutScalaVersion = Seq(
   // Sonatype publishing
   Test / publish / skip := true,
   pomIncludeRepository := { _ => false },
-  publishMavenStyle := true,
-  publishConfiguration := publishConfiguration.value.withOverwrite(true),
-  publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
   licenses := Seq(License.Apache2),
   Compile / resourceGenerators += Def.task {
     val dir = (Compile / resourceManaged).value
@@ -145,10 +144,10 @@ val sharedSettingsWithoutScalaVersion = Seq(
 )
 
 // settings for projects that are scala 2.10
-val settingsWithTwoTen =
+val settingsWithTwoTwelve =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      scalaVersion := "2.10.7",
+      scalaVersion := "2.12.21",
       scalacOptions := scalacTwoTenOptions,
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
       doc / javacOptions := Seq("-source", "1.8"),
@@ -157,14 +156,14 @@ val settingsWithTwoTen =
       )
     )
 
-val commonScalaVersions = Seq("2.12.21", "2.13.18")
+val commonScalaVersions = Seq("2.12.21", "2.13.14")
 
 // settings for projects that are cross compiled with scala 2.10
 val settingsCrossCompiledWithTwoTen =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      crossScalaVersions := Seq("2.10.7") ++ commonScalaVersions,
-      scalaVersion := "2.13.18",
+      crossScalaVersions := commonScalaVersions,
+      scalaVersion := "2.13.14",
       scalacOptions := scalacTwoTenOptions,
       javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
       doc / javacOptions := Seq("-source", "1.8"),
@@ -176,7 +175,7 @@ val settingsCrossCompiledWithTwoTen =
 val sharedSettings =
   sharedSettingsWithoutScalaVersion ++
     Seq(
-      scalaVersion := "2.13.18",
+      scalaVersion := "2.13.14",
       crossScalaVersions := commonScalaVersions,
       scalacOptions := Seq(
         "-deprecation",
@@ -210,7 +209,9 @@ lazy val publishedProjects =
   Seq[sbt.ProjectReference](
     scroogeAdaptive,
     scroogeCore,
+    scroogeGenerator,
     scroogeLinter,
+    scroogeSbtPlugin,
     scroogeSerializer,
     thriftValidation)
 
@@ -218,8 +219,13 @@ lazy val scrooge = Project(
   id = "scrooge",
   base = file(".")
 ).enablePlugins(
-    ScalaUnidocPlugin
-  ).aggregate(publishedProjects: _*)
+  ScalaUnidocPlugin
+).aggregate(publishedProjects: _*).settings(
+  publish / skip := true,
+  // releaseVersion := ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease().value,
+  releaseProcess := Seq[ReleaseStep](checkSnapshotDependencies, inquireVersions, runClean, runTest, setReleaseVersion, commitReleaseVersion, tagRelease, setNextVersion, commitNextVersion),
+  releaseCrossBuild := true
+)
 
 // This target is used for publishing dependencies locally
 // and is used for generating all(*) of the dependencies
@@ -233,7 +239,9 @@ lazy val scroogePublishLocal = Project(
   // use a different target so that we don't have conflicting output paths
   // between this and the `scrooge` target.
   base = file("target/")
-).aggregate(publishedProjects: _*)
+).aggregate(publishedProjects: _*).settings(
+  publish / skip := true
+)
 
 // must be cross compiled with scala 2.10 because scrooge-sbt-plugin
 // has a dependency on this.
@@ -241,7 +249,7 @@ lazy val thriftValidation = Project(
   id = "scrooge-thriftValidation",
   base = file("scrooge-thrift-validation")
 ).settings(
-    settingsCrossCompiledWithTwoTen
+    settingsCrossCompiledWithTwoTen,
   ).settings(
     libraryDependencies ++= Seq(
       util("validator-constraints"),
@@ -281,7 +289,7 @@ lazy val scroogeGeneratorTests = Project(
 ).settings(
     inConfig(Test)(testThriftSettings),
     sharedSettings,
-    jmockSettings
+  jmockSettings
   ).settings(
     name := "scrooge-generator-tests",
     libraryDependencies ++= Seq(
@@ -307,7 +315,7 @@ lazy val scroogeCore = Project(
       util("core"),
       util("validator"),
       util("mock") % "test"
-    )
+    ),
   ).dependsOn(thriftValidation)
 
 val serializerTestThriftSettings: Seq[Setting[_]] = Seq(
@@ -352,13 +360,13 @@ lazy val scroogeSbtPlugin = Project(
   id = "scrooge-sbt-plugin",
   base = file("scrooge-sbt-plugin")
 ).enablePlugins(BuildInfoPlugin).settings(
-    settingsWithTwoTen: _*
+    settingsWithTwoTwelve: _*
   ).settings(
-    scalaVersion := "2.10.7",
-    crossSbtVersions := Seq("0.13.18", "1.5.3"),
+    scalaVersion := "2.12.21",
+    crossSbtVersions := Seq("1.5.3"),
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.twitter",
-    sbtPlugin := true,
+    sbtPlugin := true
   ).dependsOn(scroogeGenerator)
 
 lazy val scroogeLinter = Project(
@@ -385,7 +393,8 @@ lazy val scroogeBenchmark = Project(
 ).settings(
     inConfig(Compile)(benchThriftSettings),
     sharedSettings,
-    dumpClasspathSettings
+    dumpClasspathSettings,
+    publish / skip := true
   ).enablePlugins(
     JmhPlugin
   ).settings(
@@ -406,6 +415,7 @@ lazy val scroogeDoc = Project(
     SphinxPlugin
   ).settings(
     sharedSettings,
+    publish / skip := true,
     Seq(
       doc / scalacOptions ++= Seq("-doc-title", "Scrooge", "-doc-version", version.value),
       Sphinx / includeFilter := ("*.html" | "*.png" | "*.js" | "*.css" | "*.gif" | "*.txt")
